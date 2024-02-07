@@ -2,13 +2,16 @@
 // http://localhost:3000/isolated/exercise/04.js
 
 import * as React from 'react'
+import {useLocalStorage} from './hooks/useLocalStorage'
 
 function Board() {
-  const [squares, setSquares] = React.useState(Array(9).fill(null))
+  const {state, setState} = useLocalStorage('squares', Array(9).fill(null))
 
-  const nextValue = squares.filter(Boolean).length % 2 === 0 ? 'X' : 'O'
-  const winner = calculateWinner(squares)
-  const status = calculateStatus(winner, squares, nextValue)
+  const nextValue = state.filter(Boolean).length % 2 === 0 ? 'X' : 'O'
+  const winner = calculateWinner(state)
+  const status = calculateStatus(winner, state, nextValue)
+
+  console.log(state)
 
   function calculateWinner(squares) {
     const winningLines = [
@@ -44,25 +47,25 @@ function Board() {
   }
 
   function selectSquare(square) {
-    if (winner || squares[square]) {
+    if (winner || state[square]) {
       return
     }
 
-    const squaresCopy = [...squares]
+    const squaresCopy = [...state]
     squaresCopy[square] = nextValue
-    setSquares(squaresCopy)
+    setState(squaresCopy)
   }
 
   function renderSquare(i) {
     return (
       <button className="square" onClick={() => selectSquare(i)}>
-        {squares[i]}
+        {state[i]}
       </button>
     )
   }
 
   function restart() {
-    setSquares(Array(9).fill(null))
+    setState(Array(9).fill(null))
   }
 
   return (
