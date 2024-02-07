@@ -5,13 +5,11 @@ import * as React from 'react'
 import {useLocalStorage} from './hooks/useLocalStorage'
 
 function Board() {
-  const {state, setState} = useLocalStorage('squares', Array(9).fill(null))
+  const [squares, setSquares] = useLocalStorage('squares', Array(9).fill(null))
 
-  const nextValue = state.filter(Boolean).length % 2 === 0 ? 'X' : 'O'
-  const winner = calculateWinner(state)
-  const status = calculateStatus(winner, state, nextValue)
-
-  console.log(state)
+  const nextValue = squares.filter(Boolean).length % 2 === 0 ? 'X' : 'O'
+  const winner = calculateWinner(squares)
+  const status = calculateStatus(winner, squares, nextValue)
 
   function calculateWinner(squares) {
     const winningLines = [
@@ -47,25 +45,25 @@ function Board() {
   }
 
   function selectSquare(square) {
-    if (winner || state[square]) {
+    if (winner || squares[square]) {
       return
     }
 
-    const squaresCopy = [...state]
+    const squaresCopy = [...squares]
     squaresCopy[square] = nextValue
-    setState(squaresCopy)
+    setSquares(squaresCopy)
   }
 
   function renderSquare(i) {
     return (
       <button className="square" onClick={() => selectSquare(i)}>
-        {state[i]}
+        {squares[i]}
       </button>
     )
   }
 
   function restart() {
-    setState(Array(9).fill(null))
+    setSquares(Array(9).fill(null))
   }
 
   return (
