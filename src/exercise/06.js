@@ -9,6 +9,8 @@ import {
   PokemonInfoFallback,
   PokemonDataView,
 } from '../pokemon'
+import ErrorBoundary from './ErrorBoundary'
+import ErrorFallback from './ErrorBoundary/components/ErrorFallback'
 
 function PokemonInfo({pokemonName}) {
   const [pokemonState, setPokemonState] = React.useState({
@@ -39,12 +41,7 @@ function PokemonInfo({pokemonName}) {
   } else if (status === 'pending') {
     return <PokemonInfoFallback name={pokemonName} />
   } else if (status === 'rejected') {
-    return (
-      <div role="alert">
-        There was an error:
-        <pre style={{whiteSpace: 'normal'}}>{error.message}</pre>
-      </div>
-    )
+    throw error
   } else if (status === 'resolved') {
     return <PokemonDataView pokemon={pokemon} />
   }
@@ -62,7 +59,9 @@ function App() {
       <PokemonForm pokemonName={pokemonName} onSubmit={handleSubmit} />
       <hr />
       <div className="pokemon-info">
-        <PokemonInfo pokemonName={pokemonName} />
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <PokemonInfo pokemonName={pokemonName} />
+        </ErrorBoundary>
       </div>
     </div>
   )
